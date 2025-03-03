@@ -1,12 +1,13 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
 import { getHealthHistoryChangeById } from '../Services/api.js'; 
+import { historyChange } from '../Types/types.js';
 
 
 const ViewHistoryChange = () => {
     const { id } = useParams();
-    const [healthHistory, setHealthHistory] = useState(null);
+    const [historyChange, setHistoryChange] = useState<historyChange>({} as historyChange);
 
     const navigate = useNavigate();
 
@@ -14,7 +15,7 @@ const ViewHistoryChange = () => {
         const fetchData = async () => {
             try {
                 const data = await getHealthHistoryChangeById(id);
-                setHealthHistory(data);
+                setHistoryChange(data);
             } catch (error) {
                 console.error('Error fetching health history:', error);
             }
@@ -27,7 +28,7 @@ const ViewHistoryChange = () => {
         navigate(-1); 
     };
 
-    if (!healthHistory) {
+    if (!historyChange) {
         return <div>Cargando...</div>;
     }
     
@@ -45,14 +46,14 @@ const ViewHistoryChange = () => {
                         <div className="w-full p-2">
                             <div className="mb-5">
                                 <label 
-                                    for="id" 
+                                    htmlFor="id" 
                                     className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
                                 >ID</label>
                                 <input 
                                     type="text" 
                                     name="id" 
                                     className='bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500'
-                                    value={healthHistory.id} 
+                                    value={historyChange.id} 
                                     readOnly/>
                             </div>
                         </div> 
@@ -61,14 +62,14 @@ const ViewHistoryChange = () => {
                         <div className="w-full md:w-1/2 p-2">
                             <div className="mb-5">
                                 <label 
-                                    for="healthHistoryId" 
+                                    htmlFor="healthHistoryId" 
                                     className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
                                 >Id de Historia Clinica</label>
                                 <input 
                                     type="text" 
                                     name="healthHistoryId" 
                                     className='bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500'
-                                    value={healthHistory.HealthHistoryId}
+                                    value={historyChange.healthHistoryId}
                                     readOnly />                            
                             </div>
                         </div>
@@ -77,7 +78,7 @@ const ViewHistoryChange = () => {
                         <div className="w-full md:w-1/2 p-2">
                         <div className="mb-5">
                             <label 
-                                for="changeDate" 
+                                htmlFor="changeDate" 
                                 className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
                             >Fecha de Cambio</label>
 
@@ -85,7 +86,7 @@ const ViewHistoryChange = () => {
                                 type="date" 
                                 name="changeDate" 
                                 className='bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500'
-                                value={healthHistory.changeDate ? healthHistory.changeDate.split("T")[0] : ""}  
+                                value={historyChange.changeDate ? historyChange.changeDate.split("T")[0] : ""}  
                             />
                         </div> 
                         </div>
@@ -93,14 +94,14 @@ const ViewHistoryChange = () => {
                         <div className="w-full md:w-1/2 p-2">
                             <div className="mb-5">
                                 <label 
-                                    for="fieldName" 
+                                    htmlFor="fieldName" 
                                     className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
                                 >Campo Modificado</label>
                                 <input 
                                     type="text" 
                                     name="fieldName" 
                                     className='bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500'
-                                    value={healthHistory.fieldName} 
+                                    value={historyChange.fieldName} 
                                     readOnly
                                 />
                             </div>
@@ -108,15 +109,15 @@ const ViewHistoryChange = () => {
                         <div className="w-full p-2">
                             <div className="mb-5">
                                 <label 
-                                    for="oldValue" 
+                                    htmlFor="oldValue" 
                                     className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
                                 >Valor Anterior</label>
                                 
                                 <textarea 
                                     name="oldValue" 
-                                    cols="40" 
-                                    rows="5" 
-                                    value={healthHistory.oldValue}                                     
+                                    cols={40} 
+                                    rows={5}  
+                                    value={historyChange.oldValue}                                     
                                     className='bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500'
                                     readOnly
                                 >
@@ -130,15 +131,15 @@ const ViewHistoryChange = () => {
 
                             <div className="mb-5">
                                 <label 
-                                    for="newValue" 
+                                    htmlFor="newValue" 
                                     className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
                                 >Valor Nuevo</label>                               
 
                                 <textarea 
                                     name="newValue" 
-                                    cols="40" 
-                                    rows="5" 
-                                    value={healthHistory.newValue}                                     
+                                    cols={40} 
+                                    rows={5}  
+                                    value={historyChange.newValue}                                     
                                     className='bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500'
                                 >
                                 </textarea>                             
@@ -154,9 +155,7 @@ const ViewHistoryChange = () => {
             >Volver</button>   
         </div>  
         
-        </div>
-
-        
+        </div>        
 
     );
 };

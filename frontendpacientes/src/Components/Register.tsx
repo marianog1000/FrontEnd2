@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { addUserCredential } from '../Services/api';
 
@@ -7,7 +7,7 @@ const Register = () => {
     const [password, setPassword] = useState('');
     const navigate = useNavigate();
 
-    const handleRegister = async (e) => {
+    const handleRegister = async (e: { preventDefault: () => void; }) => {
         e.preventDefault();
              
          try {
@@ -27,35 +27,35 @@ const Register = () => {
 
     return (
 
-    <div class="contain py-16">
-      <div class="max-w-lg mx-auto shadow px-6 py-7 rounded overflow-hidden">
-        <h2 class="text-2xl uppercase font-medium mb-1">Registrar Usuario </h2>    
-        <form autocomplete="off">
-          <p class="text-red-500"></p>
-          <div class="space-y-2">
+    <div className="contain py-16">
+      <div className="max-w-lg mx-auto shadow px-6 py-7 rounded overflow-hidden">
+        <h2 className="text-2xl uppercase font-medium mb-1">Registrar Usuario </h2>    
+        <form autoComplete="off">
+          <p className="text-red-500"></p>
+          <div className="space-y-2">
             <div>
                 <label 
-                    for="email" 
-                    class="text-gray-600 mb-2 block"
+                    htmlFor="email" 
+                    className="text-gray-600 mb-2 block"
                 ></label>Usuario
                 <input 
                     type="text"
                     id="username"
                     value={username}
                     onChange={(e) => setUsername(e.target.value)}
-                    class="block w-full border border-gray-300 px-4 py-3 text-gray-600 text-sm rounded focus:ring-0 focus:border-teal-500 placeholder-gray-400" 
+                    className="block w-full border border-gray-300 px-4 py-3 text-gray-600 text-sm rounded focus:ring-0 focus:border-teal-500 placeholder-gray-400" 
                     placeholder="youremail.@domain.com"
                   />
               </div>
             </div>
-            <div class="space-y-2">
+            <div className="space-y-2">
               <div>
                   <label 
-                      for="password" 
-                      class="text-gray-600 mb-2 block"
+                      htmlFor="password" 
+                      className="text-gray-600 mb-2 block"
                   ></label>Password
                   <div 
-                      class="relative"
+                      className="relative"
                   >
                   <input 
                       type="password" 
@@ -63,21 +63,21 @@ const Register = () => {
                       id="password" 
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
-                      class="block w-full border border-gray-300 px-4 py-3 text-gray-600 text-sm rounded focus:ring-0 focus:border-teal-500 placeholder-gray-400" 
+                      className="block w-full border border-gray-300 px-4 py-3 text-gray-600 text-sm rounded focus:ring-0 focus:border-teal-500 placeholder-gray-400" 
                       placeholder="***********"
                   />
                   
                 </div>
               </div>
             </div>
-            <div class="mt-4">
+            <div className="mt-4">
               <button 
                   type="submit" 
                   onClick={handleRegister}
-                  class="block w-full py-2 text-center text-white bg-teal-500 border border-teal-500 rounded hover:bg-transparent hover:text-teal-500 transition uppercase font-roboto font-medium"
+                  className="block w-full py-2 text-center text-white bg-teal-500 border border-teal-500 rounded hover:bg-transparent hover:text-teal-500 transition uppercase font-roboto font-medium"
               >Registrar</button>
             </div>
-            <div class="mt-4">
+            <div className="mt-4">
               <button
                       type="button"
                       onClick={handleBackToLogin}

@@ -1,10 +1,11 @@
-import React, { useEffect, useState } from 'react';
+import { SetStateAction, useEffect, useState } from 'react';
 import { getHealthHistoryChanges } from '../Services/api'; 
 import { useNavigate } from 'react-router-dom';
+import { historyChange } from '../Types/types';
 
 
 const HealthHistoryChange = () => {
-    const [healthHistoryChanges, setHealthHistoryChanges] = useState([]);
+    const [healthHistoryChanges, setHealthHistoryChanges] = useState<historyChange[]>([]);
     const [currentPage, setCurrentPage] = useState(1);
     const [searchTerm, setSearchTerm] = useState('');
     const recordsPerPage = 20;
@@ -24,7 +25,7 @@ const HealthHistoryChange = () => {
         fetchData();
     }, []);
 
-    const handleSearchChange = (event) => {
+    const handleSearchChange = (event: { target: { value: SetStateAction<string>; }; }) => {
         setSearchTerm(event.target.value);
         setCurrentPage(1); // Reset to first page on search
     };
@@ -61,11 +62,11 @@ const HealthHistoryChange = () => {
         }
     };
 
-    const handleView = (id) => {
+    const handleView = (id : number) => {
         navigate(`/viewHistory/${id}`);
     };
 
-    const handlePatientGrid = (id) => {
+    const handlePatientGrid = () => {
         navigate(`/patients/`);
     };
 
@@ -86,7 +87,7 @@ const HealthHistoryChange = () => {
                 <button
                     type="button"
                     className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
-                    onClick={handlePatientGrid}
+                    onClick={() => handlePatientGrid()}
                 >
                     Volver a Historias Clinicas
                 </button>

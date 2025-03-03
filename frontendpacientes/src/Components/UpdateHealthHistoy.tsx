@@ -2,65 +2,19 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { getHealthHistoryById, updateHealthHistory } from '../Services/api';
 import { Tabs, Tab } from 'react-bootstrap';
-import {enfermedades_concurrentes, sensopersepcion, afectividad, sueno} from '../Constants/Config.js'
+import {enfermedades_concurrentes, sensopersepcion, afectividad, sueno, defaultHealthHistory} from '../Constants/Config.js'
+import { HealthHistory } from '../Types/types';	
 
 const UpdateHealthHistory = () => {
     const { id } = useParams();
     const navigate = useNavigate();
-    const [history, setHistory] = useState({
-      titulo: '',
-      nro_documento: '',
-      actitud_psiquica: '',
-      actividad: '',
-      afectividad: '',
-      afiliado_nro: '',
-      antecedentes_clinicos_y_quirurgicos: '',
-      antecedentes_personales_personalidad_previa_escolaridad: '',
-      aspecto_psiquico: '',
-      atencion: '',
-      conciencia: '',
-      contenido_del_pensamiento: '',
-      control_esfinteres: '',
-      curso_del_pensamiento: '',
-      diagnostico_cie10_dsm_iv: '',
-      domicilio: '',
-      domicilio_parentesco: '',
-      edad: '',
-      enfermedad_actual: '',
-      enfermedades_concurrentes: '',
-      esta_tomando_alguna_medicacion: '',
-      estado_civil: '',
-      evolucion: '',
-      familiar_responsable_legal: '',
-      fecha_ingreso: '1900-01-01',
-      grupo_familiar_actual_antecedentes_familiares_vivienda: '',
-      fecha_de_nacimiento: '1900-01-01',
-      ideacion: '',
-      inteligencia: '',
-      juicio: '',
-      lenguaje: '',
-      memoria: '',
-      motivo_de_consulta: '',
-      nombre: '',
-      obra_social: '',
-      ocupacion_actual: '',
-      ocupaciones_previas: '',
-      orientacion: '',
-      parentesco: '',
-      sensopersepcion: '',
-      sueno: '',
-      telefono: '',
-      telefono_parentesco: '',
-      tipo_consulta: '',
-      tratamientos_psiquiatricospsicologicos_previos: ''      
-    });
-    const [selectedButton, setSelectedButton] = useState('');
-    const [errorMessage, setErrorMessage] = useState(""); 
+    const [history, setHistory] = useState<HealthHistory>(() => ({ ...defaultHealthHistory }));
+    const [errorMessage] = useState(""); 
 
     useEffect(() => {
         const fetchHistory = async () => {
             try {
-                const data = await getHealthHistoryById(id);
+                const data = await getHealthHistoryById(Number(id));
                 
                 console.log("Full API Response:", data); // 🔍 Debugging Step
 
@@ -68,58 +22,55 @@ const UpdateHealthHistory = () => {
                     console.error("Invalid response format:", data);
                     return;
                 }
-    
-                console.log("contenido_del_pensamiento:", data.contenido_del_pensamiento); // 🔍 Check if it exists
-    
-
-
                 setHistory(data);
             } catch (error) {
                 console.error('Error fetching health history:', error);
             }
         };
-
         fetchHistory();
     }, [id]);
 
-    const handleTabValidationAndSubmit =(e) => {
-      const form = e.target.closest("form");        
-      
-      form.querySelectorAll(".invalid-field").forEach((el) => {
-        el.classList.remove("invalid-field");
-      });
-      
-      if (!form.reportValidity()) {
-        const invalidFields = form.querySelectorAll(":invalid");
-        if (invalidFields.length > 0) {
-          const firstInvalid = invalidFields[0];  
-          
-          invalidFields.forEach((field) => {
-            field.classList.add("invalid-field");
-          });
-          
-          const tabPane = firstInvalid.closest(".tab-pane");
-          if (tabPane) {
-            const tabId = tabPane.id;            
-            let tabButton = document.querySelector(`[aria-controls="${tabId}"]`);
+    const handleTabValidationAndSubmit = (e: React.MouseEvent<HTMLButtonElement>) => {
+      const form = (e.target as HTMLElement).closest("form"); 
+      if (form)
+      {
+        form.querySelectorAll(".invalid-field").forEach((el: { classList: { remove: (arg0: string) => void; }; }) => {
+          el.classList.remove("invalid-field");
+        });
+        
+        if (!form.reportValidity()) {
+          const invalidFields = form.querySelectorAll(":invalid");
+          if (invalidFields.length > 0) {
+            const firstInvalid = invalidFields[0];  
+            
+            invalidFields.forEach((field: { classList: { add: (arg0: string) => void; }; }) => {
+              field.classList.add("invalid-field");
+            });
+            
+            const tabPane = firstInvalid.closest(".tab-pane");
+            if (tabPane) {
+              const tabId = tabPane.id;            
+              let tabButton = document.querySelector(`[aria-controls="${tabId}"]`);
 
-            if (tabButton) {
-              tabButton.click();
-            }
+              if (tabButton) {
+                (tabButton as HTMLElement).click();
+              }
+            }            
+            (firstInvalid as HTMLElement).focus();
           }            
-          firstInvalid.focus();
-        }            
-        return; 
+          return; 
+        }
       }
     }
 
-    const handleChange = (e) => {
-      const { name, value, type, checked } = e.target;
-      if (type === "checkbox") {
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
+      const { name, value, type } = e.target;
+      if (type === "checkbox" && e.target instanceof HTMLInputElement) {
+        const { checked } = e.target;
 
         setHistory((prev) => {
 
-          let propertyToUpdate = null;
+          let propertyToUpdate: keyof HealthHistory | null = null;
 
           if (enfermedades_concurrentes.some((item) => Object.keys(item)[0] === name)) {
             propertyToUpdate = "enfermedades_concurrentes";
@@ -133,17 +84,17 @@ const UpdateHealthHistory = () => {
 
           if (!propertyToUpdate) return prev;
 
-            let currentValue = prev[propertyToUpdate] || ""; 
+            let currentValue = propertyToUpdate ? prev[propertyToUpdate] || "" : ""; 
             let updatedArray = currentValue ? currentValue.split(",") : [];
 
             console.log(`Before Update: ${propertyToUpdate} ->`, updatedArray);
 
             if (checked) {
-              if (!updatedArray.some((item) => item === name)) {
+              if (!updatedArray.some((item: any) => item === name)) {
                 updatedArray.push(name);
               }
             } else {
-              updatedArray = updatedArray.filter((item) => item.trim() !== name.trim());
+              updatedArray = updatedArray.filter((item: string) => item.trim() !== name.trim());
             }
             console.log(`After Update: ${propertyToUpdate} ->`, updatedArray);          
           
@@ -161,10 +112,10 @@ const UpdateHealthHistory = () => {
       }
     };
 
-    const handleSubmit = async (e) => {
+    const handleSubmit = async (e: { preventDefault: () => void; }) => {
         e.preventDefault();
         try {
-            await updateHealthHistory(id, history);
+            await updateHealthHistory(Number(id), history);
             console.log('Registro actualizado:', history);
             navigate('/patients');
         } catch (error) {
@@ -172,11 +123,10 @@ const UpdateHealthHistory = () => {
         }
     };
 
-    const handleButtonClick = (tipo) => {
+    
+    const handleButtonClick = (tipo: string) => {
       setHistory({ ...history, tipo_consulta: tipo });
-      setSelectedButton(tipo);
     };
-
     const handleCancel = () => {
          navigate(-1);
    };
@@ -201,149 +151,159 @@ const UpdateHealthHistory = () => {
                     
                     <div className="w-full md:w-1/2 p-2">
                       <div className="mb-5">
-                          <label 
-                            htmlFor="base-input" 
-                            className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-                          >Tipo de Consulta</label>
+                        <label 
+                          htmlFor="base-input" 
+                          className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                        >Tipo de Consulta</label>
 
-                          <button 
-                            type="button"
-                            className={`rounded-md py-2 px-4 border border-transparent text-center text-sm transition-all shadow-md hover:shadow-lg focus:shadow-none active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none ml-2 ${history.tipo_consulta  === 'Urgencia' ? 'bg-red-500 text-white' : 'bg-white-500 text-black'}`}                                
-                            onClick={() => handleButtonClick('Urgencia')}
-                          >Urgencia</button> 
-                          <button        
-                            type="button"           
-                            className={`rounded-md py-2 px-4 border border-transparent text-center text-sm transition-all shadow-md hover:shadow-lg focus:shadow-none active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none ml-2 ${history.tipo_consulta === 'Programada' ? 'bg-blue-500 text-white' : 'bg-white-500 text-black'}`}
-                            onClick={() => handleButtonClick('Programada')}
-                          >Programada</button> 
+                        <button 
+                          type="button"
+                          className={`rounded-md py-2 px-4 border border-transparent text-center text-sm transition-all shadow-md hover:shadow-lg focus:shadow-none active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none ml-2 ${history.tipo_consulta  === 'Urgencia' ? 'bg-red-500 text-white' : 'bg-white-500 text-black'}`}                                
+                          onClick={() => handleButtonClick('Urgencia')}
+                        >Urgencia</button> 
+                        <button        
+                          type="button"           
+                          className={`rounded-md py-2 px-4 border border-transparent text-center text-sm transition-all shadow-md hover:shadow-lg focus:shadow-none active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none ml-2 ${history.tipo_consulta === 'Programada' ? 'bg-blue-500 text-white' : 'bg-white-500 text-black'}`}
+                          onClick={() => handleButtonClick('Programada')}
+                        >Programada</button> 
                       </div>
                     </div>
                   </div>
 
                   <div className="flex flex-wrap">
                     <div className="w-full p-2">
-                        <div className="mb-5">
-                            <label 
-                              htmlFor="titulo" 
-                              className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-                            >Nombre</label>
-                            <input 
-                              type="text" 
-                              name="titulo" 
-                              className='bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500'
-                              value={history.titulo} onChange={handleChange} required />                            
-                        </div>
+                      <div className="mb-5">
+                          <label 
+                            htmlFor="titulo" 
+                            className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                          >Nombre</label>
+                          <input 
+                            type="text" 
+                            name="titulo" 
+                            className='bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500'
+                            value={history.titulo} 
+                            onChange={handleChange} required 
+                          />                            
+                      </div>
                     </div> 
 
                     <div className="w-full md:w-1/2 p-2">
-                        <div className="mb-5">
-                            <label 
-                              htmlFor="base-input" 
-                              className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-                            >Nro. de Documento</label>
-                            <input 
-                              type="text" 
-                              name="nro_documento" 
-                              className='bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500'
-                              value={history.nro_documento} onChange={handleChange} />                            
-                        </div>
-                    </div>
-
-
-                    <div className="w-full md:w-1/2 p-2">
-                        <div className="mb-5">
-                            <label 
-                              htmlFor="fecha_ingreso" 
-                              className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-                            >Fecha de Ingreso</label>
-
-
-                            <input 
-                              type="date" 
-                              name="fecha_ingreso" 
-                              className='bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500'
-                              value={history.fecha_ingreso} onChange={handleChange} 
-                            />
-                        </div> 
+                      <div className="mb-5">
+                          <label 
+                            htmlFor="base-input" 
+                            className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                          >Nro. de Documento</label>
+                          <input 
+                            type="text" 
+                            name="nro_documento" 
+                            className='bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500'
+                            value={history.nro_documento} 
+                            onChange={handleChange} 
+                        />
+                      </div>
                     </div>
 
                     <div className="w-full md:w-1/2 p-2">
-                        <div className="mb-5">
-                            <label 
-                              htmlFor="obra_social" 
-                              className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-                            >Obra Social</label>
-                            <input 
-                              type="text" 
-                              name="obra_social" 
-                              className='bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500'
-                              value={history.obra_social} onChange={handleChange} />                            
-                        </div>
-                    </div>
-                    <div className="w-full md:w-1/2 p-2">
+                      <div className="mb-5">
+                        <label 
+                          htmlFor="fecha_ingreso" 
+                          className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                        >Fecha de Ingreso</label>
 
-                        <div className="mb-5">
-                            <label 
-                              htmlFor="afiliado_nro" 
-                              className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-                            >Afiliado Nro.</label>
-                            <input 
-                              type="text" 
-                              name="afiliado_nro" 
-                              className='bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500'
-                              value={history.afiliado_nro} onChange={handleChange} />                            
-                        </div>
+                        <input 
+                          type="date" 
+                          name="fecha_ingreso" 
+                          className='bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500'                              
+                          value={history.fecha_ingreso ? history.fecha_ingreso.split("T")[0] : ""}
+                          onChange={handleChange} 
+                        />
+                      </div> 
                     </div>
 
                     <div className="w-full md:w-1/2 p-2">
-                        <div className="mb-5">
-                            <label 
-                              htmlFor="edad" 
-                              className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-                            >Edad</label>
-                            <input 
-                              type="text" 
-                              name="edad" 
-                              className='bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500'
-                              value={history.edad} onChange={handleChange} />                            
-                        </div>
+                      <div className="mb-5">
+                        <label 
+                          htmlFor="obra_social" 
+                          className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                        >Obra Social</label>
+                        <input 
+                          type="text" 
+                          name="obra_social" 
+                          className='bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500'
+                          value={history.obra_social}
+                          onChange={handleChange} 
+                        />
+                      </div>
+                    </div>
+                    <div className="w-full md:w-1/2 p-2">
+                      <div className="mb-5">
+                        <label 
+                          htmlFor="afiliado_nro" 
+                          className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                        >Afiliado Nro.</label>
+                        <input 
+                          type="text" 
+                          name="afiliado_nro" 
+                          className='bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500'
+                          value={history.afiliado_nro}
+                          onChange={handleChange} 
+                        />
+                      </div>
+                    </div>
+
+                    <div className="w-full md:w-1/2 p-2">
+                      <div className="mb-5">
+                        <label 
+                          htmlFor="edad" 
+                          className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                        >Edad</label>
+                        <input 
+                          type="text" 
+                          name="edad" 
+                          className='bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500'
+                          value={history.edad}
+                          onChange={handleChange} 
+                        />
+                      </div>
                     </div>
                     <div className="w-full md:w-1/2 p-2">   
-                        <div className="mb-5">
-                            <label 
-                              htmlFor="fecha_de_nacimiento" 
-                              className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-                            >Fecha de Nacimiento</label>
-                            <input 
-                              type="date" 
-                              name="fecha_de_nacimiento" 
-                              className='bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500'
-                              value={history.fecha_de_nacimiento} onChange={handleChange} />                            
-                        </div>
+                      <div className="mb-5">
+                        <label 
+                          htmlFor="fecha_de_nacimiento" 
+                          className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                        >Fecha de Nacimiento</label>
+                        <input 
+                          type="date" 
+                          name="fecha_de_nacimiento" 
+                          className='bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500'                              
+                          value={history.fecha_de_nacimiento ? history.fecha_de_nacimiento.split("T")[0] : ""}
+                          onChange={handleChange} 
+                        />                            
+                      </div>
                     </div>
 
                     <div className="w-full md:w-1/2 p-2">
 
-                        <div className="mb-5">
-                            <label 
-                              htmlFor="estado_civil" 
-                              className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-                            >Estado Civil</label>
-                            <select 
-                              id="estado_civil" 
-                              name="estado_civil"
-                              className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                              value={history.estado_civil || ""}
-                              onChange={handleChange}
-                            >
-                              <option value="">Seleccione</option>
-                              <option value="SOLTERO">Soltero</option>
-                              <option value="CASADO">Casado</option>
-                              <option value="DIVORCIADO">Divorciado</option>
-                              <option value="CONCUBINO">Concubino</option>
-                              <option value="VIUDO">Viudo</option>
-                            </select>
-                        </div>
+                      <div className="mb-5">
+                        <label 
+                          htmlFor="estado_civil" 
+                          className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                        >Estado Civil</label>
+                        <select 
+                          id="estado_civil" 
+                          name="estado_civil"
+                          className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                          value={history.estado_civil || ""}
+                          onChange={handleChange}
+                        >
+                          <option value="">Seleccione</option>
+                          <option value="SOLTERO">Soltero</option>
+                          <option value="CASADO">Casado</option>
+                          <option value="DIVORCIADO">Divorciado</option>
+                          <option value="CONCUBINO">Concubino</option>
+                          <option value="VIUDO">Viudo</option>
+                        </select>
+                      </div>
                     </div>
 
                     <div className="w-full p-2">
@@ -356,7 +316,9 @@ const UpdateHealthHistory = () => {
                             type="text" 
                             name="ocupacion_actual" 
                             className='bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500'
-                            value={history.ocupacion_actual} onChange={handleChange} />                            
+                            value={history.ocupacion_actual} 
+                            onChange={handleChange} 
+                          />                            
                       </div>
                       <div className="mb-5">
                           <label 
@@ -367,7 +329,9 @@ const UpdateHealthHistory = () => {
                             type="text" 
                             name="ocupaciones_previas" 
                             className='bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500'
-                            value={history.ocupaciones_previas} onChange={handleChange} />                            
+                            value={history.ocupaciones_previas} 
+                            onChange={handleChange} 
+                          />                            
                       </div>
                     </div>
 
@@ -381,7 +345,9 @@ const UpdateHealthHistory = () => {
                           type="text" 
                           name="domicilio" 
                           className='bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500'
-                          value={history.domicilio} onChange={handleChange} />                            
+                          value={history.domicilio}
+                          onChange={handleChange} 
+                        />
                       </div>
                     </div>
                     <div className="w-full md:w-1/2 p-2">
@@ -394,7 +360,9 @@ const UpdateHealthHistory = () => {
                             type="text" 
                             name="telefono" 
                             className='bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500'
-                            value={history.telefono} onChange={handleChange} />                            
+                            value={history.telefono}
+                            onChange={handleChange} 
+                          />
                       </div>
                     </div>
                   
@@ -408,7 +376,9 @@ const UpdateHealthHistory = () => {
                             type="text" 
                             name="familiar_responsable_legal" 
                             className='bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500'
-                            value={history.familiar_responsable_legal} onChange={handleChange} />                            
+                            value={history.familiar_responsable_legal}
+                            onChange={handleChange} 
+                          />
                       </div>
                       <div className="mb-5">
                           <label 
@@ -419,7 +389,9 @@ const UpdateHealthHistory = () => {
                             type="text" 
                             name="parentesco" 
                             className='bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500'
-                            value={history.parentesco} onChange={handleChange} />                            
+                            value={history.parentesco} 
+                            onChange={handleChange} 
+                          />
                       </div>
                     </div>
 
@@ -433,7 +405,9 @@ const UpdateHealthHistory = () => {
                           type="text" 
                           name="domicilio_parentesco" 
                           className='bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500'
-                          value={history.domicilio_parentesco} onChange={handleChange} />                            
+                          value={history.domicilio_parentesco} 
+                          onChange={handleChange} 
+                        />
                       </div>
                     </div>
                     <div className="w-full md:w-1/2 p-2">
@@ -446,7 +420,9 @@ const UpdateHealthHistory = () => {
                             type="text" 
                             name="telefono_parentesco" 
                             className='bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500'
-                            value={history.telefono_parentesco} onChange={handleChange} />                            
+                            value={history.telefono_parentesco} 
+                            onChange={handleChange} 
+                          />
                       </div>
                     </div>
                   </div>
@@ -464,8 +440,8 @@ const UpdateHealthHistory = () => {
                       >Motivo de Consulta</label>
                       <textarea 
                         name="motivo_de_consulta" 
-                        cols="40" 
-                        rows="5" 
+                        cols={40} 
+                        rows={5}  
                         value={history.motivo_de_consulta} 
                         onChange={handleChange}
                         className='bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500'
@@ -480,8 +456,8 @@ const UpdateHealthHistory = () => {
                       >Enfermedad Actual</label>
                       <textarea 
                         name="enfermedad_actual" 
-                        cols="40" 
-                        rows="5" 
+                        cols={40} 
+                        rows={5}
                         value={history.enfermedad_actual} 
                         onChange={handleChange}
                         className='bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500'
@@ -498,8 +474,8 @@ const UpdateHealthHistory = () => {
 
                       <div className="flex flex-wrap">                    
                           {enfermedades_concurrentes.map((item) => {
-                            const key = Object.keys(item)[0];
-                            const label = item[key];
+                            const key = Object.keys(item)[0];                            
+                            const label = item[key as keyof typeof item];
 
                             return (
                             <div key={key} className="flex items-center mr-4 mb-2">
@@ -532,10 +508,12 @@ const UpdateHealthHistory = () => {
                         className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
                       >Antecedentes Clínicos y Quirúrgicos</label>
                       <input 
-                            type="text" 
-                            name="antecedentes_clinicos_y_quirurgicos" 
-                            className='bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500'
-                            value={history.antecedentes_clinicos_y_quirurgicos} onChange={handleChange} /> 
+                        type="text" 
+                        name="antecedentes_clinicos_y_quirurgicos" 
+                        className='bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500'
+                        value={history.antecedentes_clinicos_y_quirurgicos}
+                        onChange={handleChange} 
+                      />
                   </div>
 
                   <div className="mb-5">
@@ -547,7 +525,9 @@ const UpdateHealthHistory = () => {
                         type="text" 
                         name="tratamientos_psiquiatricospsicologicos_previos" 
                         className='bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500'
-                        value={history.tratamientos_psiquiatricospsicologicos_previos} onChange={handleChange} /> 
+                        value={history.tratamientos_psiquiatricospsicologicos_previos} 
+                        onChange={handleChange} 
+                      />
                   </div>
                   <div className="mb-5">
                       <label 
@@ -558,7 +538,9 @@ const UpdateHealthHistory = () => {
                         type="text" 
                         name="esta_tomando_alguna_medicacion" 
                         className='bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500'
-                        value={history.esta_tomando_alguna_medicacion} onChange={handleChange} /> 
+                        value={history.esta_tomando_alguna_medicacion} 
+                        onChange={handleChange} 
+                      />
                   </div>
                 </div>
 
@@ -810,7 +792,6 @@ const UpdateHealthHistory = () => {
                           htmlFor="contenido_del_pensamiento" 
                           className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
                         >Contenido del Pensamiento</label>
-{console.log("history.contenido_del_pensamiento " + history.contenido_del_pensamiento)}
                         <select 
                           id="contenido_del_pensamiento" 
                           name="contenido_del_pensamiento" 
@@ -839,7 +820,7 @@ const UpdateHealthHistory = () => {
                     <div className="flex flex-wrap">                    
                         {sensopersepcion.map((item) => {
                           const key = Object.keys(item)[0];
-                          const label = item[key];
+                          const label = item[key as keyof typeof item];
 
                           return (
                           <div key={key} className="flex items-center mr-4 mb-2">
@@ -875,7 +856,7 @@ const UpdateHealthHistory = () => {
                         <div className="flex flex-wrap">                    
                           {afectividad.map((item) => {
                             const key = Object.keys(item)[0];
-                            const label = item[key];
+                            const label = item[key as keyof typeof item];
 
                             return (
                             <div key={key} className="flex items-center mr-4 mb-2">
@@ -1018,7 +999,7 @@ const UpdateHealthHistory = () => {
                         <div className="flex flex-wrap">                    
                           {sueno.map((item) => {
                             const key = Object.keys(item)[0];
-                            const label = item[key];
+                            const label = item[key as keyof typeof item];
 
                             return (
                             <div key={key} className="flex items-center mr-4 mb-2">
@@ -1058,8 +1039,8 @@ const UpdateHealthHistory = () => {
                       >Diagnostico CIE10 DSM IV</label>
                       <textarea 
                         name="diagnostico_cie10_dsm_iv" 
-                        cols="40" 
-                        rows="5" 
+                        cols={40} 
+                        rows={5} 
                         value={history.diagnostico_cie10_dsm_iv} 
                         onChange={handleChange}
                         className='bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500'
@@ -1077,8 +1058,8 @@ const UpdateHealthHistory = () => {
                       >Antecedentes personales personalidad previa escolaridad</label>
                       <textarea 
                         name="antecedentes_personales_personalidad_previa_escolaridad" 
-                        cols="40" 
-                        rows="5" 
+                        cols={40} 
+                        rows={5} 
                         value={history.antecedentes_personales_personalidad_previa_escolaridad} 
                         onChange={handleChange}
                         className='bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500'
@@ -1096,8 +1077,8 @@ const UpdateHealthHistory = () => {
                       >Grupo familiar actual antecedentes familiares vivienda</label>
                       <textarea 
                         name="grupo_familiar_actual_antecedentes_familiares_vivienda" 
-                        cols="40" 
-                        rows="5" 
+                        cols={40} 
+                        rows={5} 
                         value={history.grupo_familiar_actual_antecedentes_familiares_vivienda} 
                         onChange={handleChange}
                         className='bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500'
@@ -1114,8 +1095,8 @@ const UpdateHealthHistory = () => {
                       >Evolución</label>
                       <textarea 
                         name="evolucion" 
-                        cols="40" 
-                        rows="5" 
+                        cols={40} 
+                        rows={5} 
                         value={history.evolucion} 
                         onChange={handleChange}
                         className='bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500'

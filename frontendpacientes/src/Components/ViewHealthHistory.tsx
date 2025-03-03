@@ -1,20 +1,22 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
 import { getHealthHistoryById } from '../Services/api'; 
 import { Tabs, Tab } from 'react-bootstrap';
 import {enfermedades_concurrentes, sensopersepcion, afectividad, sueno} from '../Constants/Config.js'
+import { HealthHistory } from '../Types/types.js';
+
 
 const ViewHealthHistory = () => {
     const { id } = useParams();
-    const [healthHistory, setHealthHistory] = useState(null);
+    const [healthHistory, setHealthHistory] = useState<HealthHistory>({} as HealthHistory);
 
     const navigate = useNavigate();
 
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const data = await getHealthHistoryById(id);
+                const data = await getHealthHistoryById(Number(id));
                 setHealthHistory(data);
             } catch (error) {
                 console.error('Error fetching health history:', error);
@@ -45,7 +47,7 @@ const ViewHealthHistory = () => {
                         <div className="w-full md:w-1/2 p-2">
                             <div className="mb-5">                                
                                 <label 
-                                for="base-input" 
+                                htmlFor="base-input" 
                                 className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
                                 >Tipo de Consulta</label>
 
@@ -65,7 +67,7 @@ const ViewHealthHistory = () => {
                         <div className="w-full p-2">
                             <div className="mb-5">
                                 <label 
-                                    for="base-input" 
+                                    htmlFor="base-input" 
                                     className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
                                 >Nombre</label>
                                 <input 
@@ -80,7 +82,7 @@ const ViewHealthHistory = () => {
                         <div className="w-full md:w-1/2 p-2">
                             <div className="mb-5">
                                 <label 
-                                    for="base-input" 
+                                    htmlFor="base-input" 
                                     className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
                                 >Nro. de Documento</label>
                                 <input 
@@ -95,7 +97,7 @@ const ViewHealthHistory = () => {
                         <div className="w-full md:w-1/2 p-2">
                         <div className="mb-5">
                             <label 
-                                for="base-input" 
+                                htmlFor="base-input" 
                                 className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
                             >Fecha de Ingreso</label>
 
@@ -111,7 +113,7 @@ const ViewHealthHistory = () => {
                         <div className="w-full md:w-1/2 p-2">
                             <div className="mb-5">
                                 <label 
-                                    for="base-input" 
+                                    htmlFor="base-input" 
                                     className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
                                 >Obra Social</label>
                                 <input 
@@ -127,7 +129,7 @@ const ViewHealthHistory = () => {
 
                             <div className="mb-5">
                                 <label 
-                                    for="base-input" 
+                                    htmlFor="base-input" 
                                     className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
                                 >Afiliado Nro.</label>
                                 <input 
@@ -142,7 +144,7 @@ const ViewHealthHistory = () => {
                         <div className="w-full md:w-1/2 p-2">
                             <div className="mb-5">
                                 <label 
-                                    for="base-input" 
+                                    htmlFor="base-input" 
                                     className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
                                 >Edad</label>
                                 <input 
@@ -159,7 +161,7 @@ const ViewHealthHistory = () => {
                         <div className="w-full md:w-1/2 p-2">   
                             <div className="mb-5">
                                 <label 
-                                    for="base-input" 
+                                    htmlFor="base-input" 
                                     className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
                                 >Fecha de Nacimiento</label>
                                 <input 
@@ -176,7 +178,7 @@ const ViewHealthHistory = () => {
 
                             <div className="mb-5">
                                 <label 
-                                    for="base-input" 
+                                    htmlFor="base-input" 
                                     className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
                                 >Estado Civil</label>
                                 <input 
@@ -192,7 +194,7 @@ const ViewHealthHistory = () => {
                         <div className="w-full p-2">
                             <div className="mb-5">
                                 <label 
-                                    for="base-input" 
+                                    htmlFor="base-input" 
                                     className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
                                 >Ocupación Actual</label>
                                 <input 
@@ -204,7 +206,7 @@ const ViewHealthHistory = () => {
                             </div>
                             <div className="mb-5">
                                 <label 
-                                    for="base-input" 
+                                    htmlFor="base-input" 
                                     className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
                                 >Ocupaciones Previas</label>
                                 <input 
@@ -219,7 +221,7 @@ const ViewHealthHistory = () => {
                         <div className="w-full md:w-1/2 p-2">
                             <div className="mb-5">
                             <label 
-                                for="base-input" 
+                                htmlFor="base-input" 
                                 className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
                             >Domicilio</label>
                             <input 
@@ -232,7 +234,7 @@ const ViewHealthHistory = () => {
                         <div className="w-full md:w-1/2 p-2">
                             <div className="mb-5">
                                 <label 
-                                    for="base-input" 
+                                    htmlFor="base-input" 
                                     className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
                                 >Teléfono</label>
                                 <input 
@@ -247,7 +249,7 @@ const ViewHealthHistory = () => {
                         <div className="w-full p-2">
                             <div className="mb-5">
                                 <label 
-                                    for="base-input" 
+                                    htmlFor="base-input" 
                                     className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
                                 >Familiar Responsable Legal</label>
                                 <input 
@@ -259,7 +261,7 @@ const ViewHealthHistory = () => {
                             </div>
                             <div className="mb-5">
                                 <label 
-                                    for="base-input" 
+                                    htmlFor="base-input" 
                                     className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
                                 >Parentesco</label>
                                 <input 
@@ -273,7 +275,7 @@ const ViewHealthHistory = () => {
                         <div className="w-full md:w-1/2 p-2">
                             <div className="mb-5">
                             <label 
-                                for="base-input" 
+                                htmlFor="base-input" 
                                 className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
                             >Domicilio Parentesco</label>
                             <input 
@@ -286,7 +288,7 @@ const ViewHealthHistory = () => {
                         <div className="w-full md:w-1/2 p-2">
                             <div className="mb-5">
                                 <label 
-                                    for="base-input" 
+                                    htmlFor="base-input" 
                                     className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
                                 >Teléfono Parentesco</label>
                                 <input 
@@ -305,7 +307,7 @@ const ViewHealthHistory = () => {
                     <div className="w-full p-2">
                         <div className="mb-5">
                             <label 
-                                for="base-input" 
+                                htmlFor="base-input" 
                                 className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
                             >Motivo de Consulta</label>
 
@@ -319,13 +321,13 @@ const ViewHealthHistory = () => {
                         </div>
                         <div className="mb-5">
                             <label 
-                                for="base-input" 
+                                htmlFor="base-input" 
                                 className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
                             >Enfermedad Actual</label>                           
                             <textarea 
                                 name="enfermedad_actual" 
-                                cols="40" 
-                                rows="5" 
+                                cols={40}
+                                rows={5} 
                                 value={healthHistory.enfermedad_actual}                                 
                                 className='bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500'
                             >
@@ -335,14 +337,14 @@ const ViewHealthHistory = () => {
 
                         <div className="mb-5">
                             <label 
-                                for="base-input" 
+                                htmlFor="base-input" 
                                 className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
                             >Enfermedades Concurrentes</label>
                             
                             <div className="flex flex-wrap">                    
                                 {enfermedades_concurrentes.map((item) => {
                                     const key = Object.keys(item)[0];
-                                    const label = item[key];
+                                    const label = item[key as keyof typeof item];
         
                                     return (
                                     <div key={key} className="flex items-center mr-4 mb-2">
@@ -371,7 +373,7 @@ const ViewHealthHistory = () => {
 
                     <div className="mb-5">
                         <label 
-                        for="base-input" 
+                        htmlFor="base-input" 
                         className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
                         >Antecedentes Clínicos y Quirúrgicos</label>
                         <input 
@@ -383,7 +385,7 @@ const ViewHealthHistory = () => {
 
                     <div className="mb-5">
                         <label 
-                        for="base-input" 
+                        htmlFor="base-input" 
                         className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
                         >Tratamiento Psicologicos y Psiquiatricos Previos</label>
                         <input 
@@ -394,7 +396,7 @@ const ViewHealthHistory = () => {
                     </div>
                     <div className="mb-5">
                         <label 
-                        for="base-input" 
+                        htmlFor="base-input" 
                         className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
                         >¿Está tomando alguna medicación?</label>
                         <input 
@@ -409,7 +411,7 @@ const ViewHealthHistory = () => {
                         <div className="w-full md:w-1/2 p-2">
                         <div className="mb-5">
                             <label 
-                            for="base-input" 
+                            htmlFor="base-input" 
                             className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
                             >Aspecto Psiquico</label>
 
@@ -424,7 +426,7 @@ const ViewHealthHistory = () => {
                         <div className="w-full md:w-1/2 p-2">
                         <div className="mb-5">
                                 <label 
-                                    for="base-input" 
+                                    htmlFor="base-input" 
                                     className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
                                 >Actitud Psiquica</label>
 
@@ -441,7 +443,7 @@ const ViewHealthHistory = () => {
                         <div className="w-full md:w-1/2 p-2">
                         <div className="mb-5">
                                 <label 
-                                    for="base-input" 
+                                    htmlFor="base-input" 
                                     className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
                                 >Actividad</label>
 
@@ -456,7 +458,7 @@ const ViewHealthHistory = () => {
                         <div className="w-full md:w-1/2 p-2">
                         <div className="mb-5">
                                 <label 
-                                    for="base-input" 
+                                    htmlFor="base-input" 
                                     className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
                                 >Orientación</label>
 
@@ -473,7 +475,7 @@ const ViewHealthHistory = () => {
                         <div className="w-full md:w-1/2 p-2">
                         <div className="mb-5">
                                 <label 
-                                    for="base-input" 
+                                    htmlFor="base-input" 
                                     className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
                                 >Conciencia</label>
 
@@ -489,7 +491,7 @@ const ViewHealthHistory = () => {
                         <div className="w-full md:w-1/2 p-2">
                         <div className="mb-5">
                                 <label 
-                                    for="base-input" 
+                                    htmlFor="base-input" 
                                     className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
                                 >Memoria</label>
 
@@ -506,7 +508,7 @@ const ViewHealthHistory = () => {
                         <div className="w-full md:w-1/2 p-2">
                         <div className="mb-5">
                                 <label 
-                                    for="base-input" 
+                                    htmlFor="base-input" 
                                     className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
                                 >Atención</label>
 
@@ -521,7 +523,7 @@ const ViewHealthHistory = () => {
                         <div className="w-full md:w-1/2 p-2">
                         <div className="mb-5">
                                 <label 
-                                    for="base-input" 
+                                    htmlFor="base-input" 
                                     className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
                                 >Ideación</label>
 
@@ -538,7 +540,7 @@ const ViewHealthHistory = () => {
                         <div className="w-full md:w-1/2 p-2">
                         <div className="mb-5">
                                 <label 
-                                    for="base-input" 
+                                    htmlFor="base-input" 
                                     className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
                                 >Curso del Pensamiento</label>
 
@@ -553,7 +555,7 @@ const ViewHealthHistory = () => {
                         <div className="w-full md:w-1/2 p-2">
                         <div className="mb-5">
                                 <label 
-                                    for="base-input" 
+                                    htmlFor="base-input" 
                                     className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
                                 >Contenido del Pensamiento</label>
 
@@ -570,14 +572,14 @@ const ViewHealthHistory = () => {
                     
                     <div className="mb-5">
                         <label 
-                        for="base-input" 
+                        htmlFor="base-input" 
                         className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
                         >Sensopersepción</label>
 
                         <div className="flex flex-wrap">
                             {sensopersepcion.map((item) => {
-                                const key = Object.keys(item)[0];
-                                const label = item[key];
+                                const key = Object.keys(item)[0];                                
+                                const label = item[key as keyof typeof item];
     
                                 return (
                                 <div key={key} className="flex items-center mr-4 mb-2">
@@ -606,14 +608,14 @@ const ViewHealthHistory = () => {
 
                     <div className="mb-5">
                         <label 
-                        for="base-input" 
+                        htmlFor="base-input" 
                         className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
                         >Afectividad</label>
 
                         <div className="flex flex-wrap">
                             {afectividad.map((item) => {
-                                const key = Object.keys(item)[0];
-                                const label = item[key];
+                                const key = Object.keys(item)[0];                                
+                                const label = item[key as keyof typeof item];
     
                                 return (
                                 <div key={key} className="flex items-center mr-4 mb-2">
@@ -644,7 +646,7 @@ const ViewHealthHistory = () => {
                         <div className="w-full md:w-1/2 p-2">
                         <div className="mb-5">
                                 <label 
-                                    for="base-input" 
+                                    htmlFor="base-input" 
                                     className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
                                 >Inteligencia</label>
 
@@ -659,7 +661,7 @@ const ViewHealthHistory = () => {
                         <div className="w-full md:w-1/2 p-2">
                         <div className="mb-5">
                                 <label 
-                                    for="base-input" 
+                                    htmlFor="base-input" 
                                     className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
                                 >Juicio</label>
 
@@ -677,7 +679,7 @@ const ViewHealthHistory = () => {
                         <div className="w-full md:w-1/2 p-2">
                         <div className="mb-5">
                                 <label 
-                                    for="base-input" 
+                                    htmlFor="base-input" 
                                     className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
                                 >Control de Esfinteres</label>
 
@@ -692,7 +694,7 @@ const ViewHealthHistory = () => {
                         <div className="w-full md:w-1/2 p-2">
                         <div className="mb-5">
                                 <label 
-                                    for="base-input" 
+                                    htmlFor="base-input" 
                                     className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
                                 >Lenguaje</label>
 
@@ -708,14 +710,14 @@ const ViewHealthHistory = () => {
 
                     <div className="mb-5">
                         <label 
-                        for="base-input" 
+                        htmlFor="base-input" 
                         className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
                         >Sueño</label>
 
                         <div className="flex flex-wrap">
                             {sueno.map((item) => {
-                                const key = Object.keys(item)[0];
-                                const label = item[key];
+                                const key = Object.keys(item)[0];                                
+                                const label = item[key as keyof typeof item]; 
     
                                 return (
                                 <div key={key} className="flex items-center mr-4 mb-2">
@@ -742,79 +744,79 @@ const ViewHealthHistory = () => {
                         </div>
                     </div>   
                 </Tab>
-                   <Tab eventKey="diagnostico_tratamiento" title="Diagnóstico y Tratamiento">                
-                
-                        <div className="w-full p-2">
-                        <div className="mb-5">
-                            <label 
-                                htmlFor="base-input" 
-                                className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-                            >Diagnostico CIE10 DSM IV</label>
-                            <textarea 
-                                name="diagnostico_cie10_dsm_iv" 
-                                cols="40" 
-                                rows="5" 
-                                value={healthHistory.diagnostico_cie10_dsm_iv}                                 
-                                className='bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500'
-                            >
-                            </textarea>
-        
-                        </div>
-                        </div>
-        
-                        <div className="w-full p-2">
-                        <div className="mb-5">
-                            <label 
-                                htmlFor="base-input" 
-                                className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-                            >Antecedentes personales personalidad previa escolaridad</label>
-                            <textarea 
-                                name="antecedentes_personales_personalidad_previa_escolaridad" 
-                                cols="40" 
-                                rows="5" 
-                                value={healthHistory.antecedentes_personales_personalidad_previa_escolaridad}                                 
-                                className='bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500'
-                            >
-                            </textarea>
-        
-                        </div>
-                        </div>
-        
-                        <div className="w-full p-2">
-                        <div className="mb-5">
-                            <label 
-                                htmlFor="base-input" 
-                                className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-                            >Grupo familiar actual antecedentes familiares vivienda</label>
-                            <textarea 
-                                name="grupo_familiar_actual_antecedentes_familiares_vivienda" 
-                                cols="40" 
-                                rows="5" 
-                                value={healthHistory.grupo_familiar_actual_antecedentes_familiares_vivienda} 
-                                className='bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500'
-                            >
-                            </textarea>
-        
-                        </div>
-                        </div>
-                        <div className="w-full p-2">
-                        <div className="mb-5">
-                            <label 
-                                htmlFor="base-input" 
-                                className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-                            >Evolución</label>
-                            <textarea 
-                                name="evolucion" 
-                                cols="40" 
-                                rows="5" 
-                                value={healthHistory.evolucion}                                 
-                                className='bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500'
-                            >
-                            </textarea>
-        
-                        </div>
-                        </div>        
-                    </Tab>
+                <Tab eventKey="diagnostico_tratamiento" title="Diagnóstico y Tratamiento">                
+            
+                    <div className="w-full p-2">
+                    <div className="mb-5">
+                        <label 
+                            htmlFor="base-input" 
+                            className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                        >Diagnostico CIE10 DSM IV</label>
+                        <textarea 
+                            name="diagnostico_cie10_dsm_iv" 
+                            cols={40}
+                            rows={5} 
+                            value={healthHistory.diagnostico_cie10_dsm_iv}                                 
+                            className='bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500'
+                        >
+                        </textarea>
+    
+                    </div>
+                    </div>
+    
+                    <div className="w-full p-2">
+                    <div className="mb-5">
+                        <label 
+                            htmlFor="base-input" 
+                            className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                        >Antecedentes personales personalidad previa escolaridad</label>
+                        <textarea 
+                            name="antecedentes_personales_personalidad_previa_escolaridad" 
+                            cols={40}
+                            rows={5} 
+                            value={healthHistory.antecedentes_personales_personalidad_previa_escolaridad}                                 
+                            className='bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500'
+                        >
+                        </textarea>
+    
+                    </div>
+                    </div>
+    
+                    <div className="w-full p-2">
+                    <div className="mb-5">
+                        <label 
+                            htmlFor="base-input" 
+                            className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                        >Grupo familiar actual antecedentes familiares vivienda</label>
+                        <textarea 
+                            name="grupo_familiar_actual_antecedentes_familiares_vivienda" 
+                            cols={40}
+                            rows={5} 
+                            value={healthHistory.grupo_familiar_actual_antecedentes_familiares_vivienda} 
+                            className='bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500'
+                        >
+                        </textarea>
+    
+                    </div>
+                    </div>
+                    <div className="w-full p-2">
+                    <div className="mb-5">
+                        <label 
+                            htmlFor="base-input" 
+                            className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                        >Evolución</label>
+                        <textarea 
+                            name="evolucion" 
+                            cols={40}
+                            rows={5} 
+                            value={healthHistory.evolucion}                                 
+                            className='bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500'
+                        >
+                        </textarea>
+    
+                    </div>
+                    </div>        
+                </Tab>
             </Tabs>
              
             <button 
@@ -825,9 +827,6 @@ const ViewHealthHistory = () => {
         </div>  
         
         </div>
-
-        
-
     );
 };
 

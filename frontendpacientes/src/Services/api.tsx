@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { HealthHistory } from '../Types/types';
 
 const API_URL = 'http://localhost:5118/HealthHistory'; 
 const API_URL_USERCREDENTIAL = 'http://localhost:5118/UserCredential'; 
@@ -15,7 +16,7 @@ export const getHealthHistories = async () => {
     }
 };
 
-export const getHealthHistoryById = async (id) => {
+export const getHealthHistoryById = async (id : number) => {
     try {
         const response = await axios.get(`${API_URL}/${id}`);
         return response.data;
@@ -25,7 +26,7 @@ export const getHealthHistoryById = async (id) => {
     }
 };
 
-export const addHealthHistory = async (newHistory) => {
+export const addHealthHistory = async (newHistory : HealthHistory) => {
     try {        
         const response = await axios.post(API_URL, newHistory);        
         return response.data;
@@ -35,7 +36,7 @@ export const addHealthHistory = async (newHistory) => {
     }
 };
 
-export const updateHealthHistory = async (id, updatedHistory) => {
+export const updateHealthHistory = async (id : number, updatedHistory : HealthHistory ) => {
     try {
         const response = await axios.put(`${API_URL}/${id}`, updatedHistory);
         return response.data;
@@ -45,7 +46,7 @@ export const updateHealthHistory = async (id, updatedHistory) => {
     }
 };
 
-export const deleteHealthHistory = async (id) => {
+export const deleteHealthHistory = async (id: number) => {
     try {
         await axios.delete(`${API_URL}/${id}`);
     } catch (error) {
@@ -54,7 +55,7 @@ export const deleteHealthHistory = async (id) => {
     }
 };
 
-export const addUserCredential = async (newUser) => {
+export const addUserCredential = async (newUser: { username: string; password: string; }) => {
     try {
         console.error(newUser);
         const response = await axios.post(API_URL_USERCREDENTIAL, newUser);
@@ -65,7 +66,7 @@ export const addUserCredential = async (newUser) => {
     }
 };
 
-export const validateUserCredential = async (newUser) => {
+export const validateUserCredential = async (newUser: { username: string; password: string; }) => {
     try {
         console.error(newUser);
         const response = await axios.post((`${API_URL_USERCREDENTIAL}/validate`), newUser);
@@ -87,7 +88,7 @@ export const getHealthHistoryChanges = async () => {
     }
 };
 
-export const getHealthHistoryChangeById = async (id) => {
+export const getHealthHistoryChangeById = async (id: string | undefined) => {
     try {
         const response = await axios.get(`${API_URL_HEALTHHISTORYCHANGE}/${id}`);
         return response.data;

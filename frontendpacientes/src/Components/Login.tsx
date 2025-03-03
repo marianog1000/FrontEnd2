@@ -2,13 +2,17 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { validateUserCredential } from '../Services/api';
 
-const Login = ({ setIsAuthenticated }) => {
+interface LoginProps {
+    setIsAuthenticated: (isAuthenticated: boolean) => void;
+}
+
+const Login: React.FC<LoginProps> = ({ setIsAuthenticated }) => {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
     const navigate = useNavigate();
 
 
-    const handleLogin = async (e) => {
+    const handleLogin = async (e: { preventDefault: () => void; }) => {
         e.preventDefault();
                 
             try {
@@ -33,7 +37,7 @@ const Login = ({ setIsAuthenticated }) => {
         <div className="max-w-lg mx-auto shadow px-6 py-7 rounded overflow-hidden">
             <h2 className="text-2xl uppercase font-medium mb-1">Login</h2>
             <p className="text-gray-600 mb-6 text-sm">Welcome! So good to have you back!</p>
-            <form autocomplete="off" onSubmit={handleLogin} >
+            <form autoComplete="off" onSubmit={handleLogin} >
                 <p className="text-red-500"></p>
                 <div className="space-y-2">
                     <div>

@@ -3,17 +3,18 @@ import { useNavigate } from 'react-router-dom';
 import Modal from 'react-modal';
 import { getHealthHistories, deleteHealthHistory } from '../Services/api';
 import '../Styles/PatientGrid.css';
+import { HealthHistory } from '../Types/types';
 //import jsPDF from 'jspdf';
 //import 'jspdf-autotable';
 
 Modal.setAppElement('#root');
 
 const PatientGrid = () => {
-    const [healthHistories, setHealthHistories] = useState([]);
+    const [healthHistories, setHealthHistories] = useState<HealthHistory[]>([] as HealthHistory[]);
     const [currentPage, setCurrentPage] = useState(1);
     const [searchTerm, setSearchTerm] = useState('');
     const [modalIsOpen, setModalIsOpen] = useState(false);
-    const [selectedId, setSelectedId] = useState(null);
+    const [selectedId, setSelectedId] = useState<number | null>(null);
     const [confirmationMessage, setConfirmationMessage] = useState('');
     const recordsPerPage = 20;
     const navigate = useNavigate();
@@ -31,7 +32,7 @@ const PatientGrid = () => {
         fetchData();
     }, []);
 
-    const handleSearchChange = (event) => {
+    const handleSearchChange = (event: { target: { value: React.SetStateAction<string>; }; }) => {
         setSearchTerm(event.target.value);
         setCurrentPage(1); // Reset to first page on search
     };
@@ -62,11 +63,11 @@ const PatientGrid = () => {
         navigate('/add');
     };
 
-    const handleEdit = (id) => {
+    const handleEdit = (id: number) => {
         navigate(`/edit/${id}`);
     };
 
-    const handleView = (id) => {
+    const handleView = (id: number) => {
         navigate(`/view/${id}`);
     };
 
@@ -74,7 +75,7 @@ const PatientGrid = () => {
         navigate(`/healthhistorychange/`);
     };
 
-    const openModal = (id) => {  
+    const openModal = (id: number) => {  
         if (!modalIsOpen) {
             setSelectedId(id);
             setModalIsOpen(true);
@@ -90,7 +91,9 @@ const PatientGrid = () => {
         try {
             console.log('HandleDelete ');
 
-            await deleteHealthHistory(selectedId);
+            if (selectedId !== null) {
+                await deleteHealthHistory(selectedId);
+            }
             setHealthHistories(healthHistories.filter(history => history.id !== selectedId));
             console.log(`Registro con ID: ${selectedId} eliminado`);
             setConfirmationMessage(`Registro con ID: ${selectedId} eliminado correctamente.`);
